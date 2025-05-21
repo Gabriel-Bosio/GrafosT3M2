@@ -327,6 +327,7 @@ namespace GrafosT3M2
                     if (!coresVertices.Any(corVizinho => corVizinho.Cor == corAtual && corVertice.Vizinhos.Contains(corVizinho.Vertice)))
                     {
                         corVertice.Cor = corAtual;
+                        CalcularSaturacao(coresVertices);
                     }
                     corAtual++;
                 }
@@ -336,6 +337,15 @@ namespace GrafosT3M2
             sw.Stop();
 
             return (sw.Elapsed.TotalSeconds, qtdCores, coresVertices);
+        }
+
+        public void CalcularSaturacao(List<ColoracaoVertice> coresVertice)
+        {
+            foreach(ColoracaoVertice corVertice in coresVertice)
+            {
+                List<int> vizinhos = RetornarVizinhos(corVertice.Vertice);
+                corVertice.Saturacao = coresVertice.Where(c => vizinhos.Contains(c.Vertice)).Select(c => c.Cor).Distinct().Count();
+            }
         }
 
         public (double Tempo, int QtdCores, List<ColoracaoVertice> Cores) ColoracaoSemCriterio()
@@ -367,7 +377,7 @@ namespace GrafosT3M2
         public void ImprimeColoracao((double Tempo, int QtdCores, Dictionary<int, int> Cores) resultado)
         {
             Console.WriteLine("\nResultado da Coloracao por Força Bruta:\n");
-            Console.WriteLine($"Tempo de Exução: {resultado.Tempo} segundos\n");
+            Console.WriteLine($"Tempo de Exução: {resultado.Tempo.ToString("F8")} segundos\n");
             Console.WriteLine($"Cores usadas: {resultado.QtdCores}\n");
             if(resultado.Cores.Count < 10)
             {
@@ -397,7 +407,7 @@ namespace GrafosT3M2
                     Console.WriteLine("\nResultado da Coloracao:\n");
                     break;
             }
-            Console.WriteLine($"Tempo de Exução: {resultado.Tempo} segundos\n");
+            Console.WriteLine($"Tempo de Exução: {resultado.Tempo.ToString("F8")} segundos\n");
             Console.WriteLine($"Cores usadas: {resultado.QtdCores}\n");
             if (resultado.Cores.Count < 10)
             {
